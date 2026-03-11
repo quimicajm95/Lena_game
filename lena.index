@@ -1,0 +1,1714 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>El Girasol de Lenita 🌻</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap');
+
+  :root {
+    --sun: #FFD700;
+    --sun2: #FFA500;
+    --green: #4CAF50;
+    --green2: #2E7D32;
+    --soil: #795548;
+    --soil2: #4E342E;
+    --sky: #87CEEB;
+    --sky2: #1565C0;
+    --petal: #FF8C00;
+    --center: #5D4037;
+    --pink: #FF69B4;
+    --cream: #FFF8E1;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: linear-gradient(180deg, #87CEEB 0%, #B3E5FC 40%, #C8E6C9 70%, #795548 100%);
+    min-height: 100vh;
+    overflow: hidden;
+    position: relative;
+    touch-action: manipulation;
+  }
+
+  /* ===== SCREENS ===== */
+  .screen {
+    position: fixed; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 20px;
+    transition: opacity 0.5s, transform 0.5s;
+    overflow-y: auto;
+  }
+  .screen.hidden { opacity:0; pointer-events:none; transform: scale(0.95); }
+
+  /* ===== BACKGROUND ELEMENTS ===== */
+  .clouds {
+    position: fixed; top: 0; left: 0; width: 100%; pointer-events: none; z-index: 0;
+  }
+  .cloud {
+    position: absolute;
+    background: white;
+    border-radius: 50px;
+    opacity: 0.85;
+    animation: float-cloud linear infinite;
+  }
+  .cloud::before, .cloud::after {
+    content:''; position:absolute; background:white; border-radius:50%;
+  }
+  @keyframes float-cloud { from { transform: translateX(-200px); } to { transform: translateX(110vw); } }
+
+  .sun-bg {
+    position: fixed; top: 15px; right: 20px;
+    width: 70px; height: 70px;
+    background: radial-gradient(circle, #FFE082, #FFB300);
+    border-radius: 50%;
+    box-shadow: 0 0 30px #FFD700, 0 0 60px rgba(255,200,0,0.4);
+    animation: pulse-sun 3s ease-in-out infinite;
+    z-index: 1;
+  }
+  @keyframes pulse-sun { 0%,100%{box-shadow:0 0 30px #FFD700, 0 0 60px rgba(255,200,0,0.3);} 50%{box-shadow:0 0 50px #FFD700, 0 0 90px rgba(255,200,0,0.6);} }
+
+  /* ===== PROGRESS BAR ===== */
+  #progress-bar {
+    position: fixed; top: 0; left: 0; right: 0; height: 8px;
+    background: rgba(0,0,0,0.15); z-index: 100;
+  }
+  #progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4CAF50, #FFD700);
+    transition: width 1s ease;
+    border-radius: 0 4px 4px 0;
+  }
+
+  /* ===== STAGE INDICATOR ===== */
+  #stage-label {
+    position: fixed; top: 14px; left: 15px;
+    font-family: 'Fredoka One', cursive;
+    font-size: 13px;
+    color: white;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+    z-index: 100;
+    background: rgba(0,0,0,0.2);
+    padding: 4px 10px;
+    border-radius: 20px;
+  }
+
+  /* ===== SUNFLOWER SCENE ===== */
+  #sunflower-scene {
+    position: fixed; bottom: 0; left: 50%;
+    transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center;
+    pointer-events: none; z-index: 0;
+    transition: all 1s ease;
+    opacity: 0.45;
+    filter: blur(1px) saturate(0.8);
+  }
+
+  .flower-head {
+    position: relative;
+    width: 100px; height: 100px;
+    display: none;
+    animation: sway 4s ease-in-out infinite;
+  }
+  @keyframes sway { 0%,100%{transform:rotate(-3deg);} 50%{transform:rotate(3deg);} }
+
+  .petals-ring {
+    position: absolute; inset: -20px;
+    animation: spin-slow 20s linear infinite;
+  }
+  @keyframes spin-slow { to { transform: rotate(360deg); } }
+
+  .petal {
+    position: absolute;
+    width: 22px; height: 38px;
+    background: linear-gradient(to bottom, #FFB300, #FF8F00);
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    left: 50%; top: 50%;
+    transform-origin: bottom center;
+  }
+
+  .flower-center {
+    position: absolute;
+    width: 60px; height: 60px;
+    background: radial-gradient(circle at 40% 35%, #8D6E63, #4E342E);
+    border-radius: 50%;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: inset 0 -4px 8px rgba(0,0,0,0.3);
+  }
+  .flower-center::after {
+    content:'';
+    position: absolute; inset: 5px;
+    background: radial-gradient(circle, #6D4C41 25%, #3E2723 100%);
+    border-radius: 50%;
+  }
+
+  .stem {
+    width: 12px;
+    background: linear-gradient(to right, #388E3C, #4CAF50, #388E3C);
+    border-radius: 6px;
+    position: relative;
+    transition: height 1s ease;
+  }
+  .stem::before, .stem::after {
+    content: '🍃';
+    position: absolute;
+    font-size: 22px;
+  }
+  .stem::before { left: -18px; top: 30%; transform: rotate(-20deg); }
+  .stem::after  { right: -18px; top: 55%; transform: rotate(20deg) scaleX(-1); }
+
+  .soil-mound {
+    width: 120px; height: 45px;
+    background: radial-gradient(ellipse, #6D4C41 30%, #4E342E 100%);
+    border-radius: 50% 50% 0 0;
+    position: relative;
+    box-shadow: 0 4px 0 #3E2723;
+  }
+  .soil-mound::after {
+    content:'🌱';
+    font-size: 18px;
+    position:absolute; top:-8px; left:50%; transform:translateX(-50%);
+    display: var(--sprout-display, none);
+  }
+
+  /* ===== CARD STYLES ===== */
+  .game-card {
+    background: rgba(255,255,255,0.92);
+    border-radius: 24px;
+    padding: 28px 24px;
+    width: 100%; max-width: 380px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.15), 0 2px 8px rgba(0,0,0,0.1);
+    position: relative; z-index: 10;
+    text-align: center;
+  }
+
+  .card-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 26px;
+    color: #2E7D32;
+    margin-bottom: 8px;
+  }
+
+  .card-subtitle {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 20px;
+    line-height: 1.5;
+  }
+
+  .btn {
+    display: inline-block;
+    font-family: 'Fredoka One', cursive;
+    font-size: 18px;
+    padding: 14px 32px;
+    border: none; border-radius: 50px;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+    box-shadow: 0 4px 0 rgba(0,0,0,0.2);
+    letter-spacing: 0.5px;
+  }
+  .btn:active { transform: translateY(3px); box-shadow: 0 1px 0 rgba(0,0,0,0.2); }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #4CAF50, #2E7D32);
+    color: white;
+  }
+  .btn-yellow {
+    background: linear-gradient(135deg, #FFD700, #FFA000);
+    color: #3E2723;
+  }
+  .btn-pink {
+    background: linear-gradient(135deg, #FF69B4, #C2185B);
+    color: white;
+  }
+  .btn-sm {
+    font-size: 15px;
+    padding: 10px 22px;
+  }
+
+  /* ===== MINIGAME: TAP ===== */
+  #tap-area {
+    width: 160px; height: 160px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #A5D6A7, #66BB6A);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 60px;
+    margin: 16px auto;
+    box-shadow: 0 6px 0 #388E3C, 0 0 20px rgba(76,175,80,0.4);
+    cursor: pointer; transition: transform 0.1s;
+    position: relative; overflow: hidden;
+  }
+  #tap-area:active { transform: scale(0.93); }
+
+  .tap-burst {
+    position: absolute;
+    font-size: 20px;
+    animation: burst 0.7s forwards;
+    pointer-events: none;
+  }
+  @keyframes burst {
+    0% { opacity:1; transform: scale(0.5) translateY(0); }
+    100% { opacity:0; transform: scale(1.5) translateY(-50px); }
+  }
+
+  #tap-progress {
+    width: 100%; height: 16px;
+    background: #E0E0E0;
+    border-radius: 8px; overflow: hidden;
+    margin: 8px 0;
+  }
+  #tap-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4CAF50, #8BC34A);
+    border-radius: 8px;
+    transition: width 0.2s;
+  }
+
+  /* ===== MINIGAME: MEMORY ===== */
+  #memory-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    width: 100%;
+    max-width: 320px;
+    margin: 8px auto;
+  }
+  .mem-card {
+    aspect-ratio: 1;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #4CAF50, #1B5E20);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 17px;
+    cursor: pointer;
+    transition: transform 0.3s;
+    box-shadow: 0 3px 0 rgba(0,0,0,0.2);
+    transform-style: preserve-3d;
+    position: relative;
+  }
+  .mem-card.flipped { transform: rotateY(180deg); }
+  .mem-card .back {
+    position: absolute; inset: 0;
+    backface-visibility: hidden;
+    display: flex; align-items:center; justify-content:center;
+    border-radius: 8px;
+    font-size: 17px;
+  }
+  .mem-card .front {
+    background: linear-gradient(135deg, #4CAF50, #1B5E20);
+    border-radius: 8px;
+  }
+  .mem-card .back {
+    background: #FFF9C4;
+    transform: rotateY(180deg);
+    border-radius: 8px;
+    border: 2px solid #FFD700;
+  }
+  .mem-card.matched {
+    opacity: 0.45;
+    pointer-events: none;
+    filter: saturate(0.5);
+  }
+
+  /* ===== MINIGAME: BASKET WATER ===== */
+  #water-game-wrap { user-select: none; }
+  #basket-arena {
+    position: relative;
+    width: 100%;
+    height: 220px;
+    background: linear-gradient(180deg, #B3E5FC 0%, #E1F5FE 60%, #A5D6A7 85%, #81C784 100%);
+    border-radius: 16px;
+    overflow: hidden;
+    margin: 10px 0;
+    border: 3px solid #64B5F6;
+    touch-action: none;
+  }
+  /* rain streaks background */
+  #basket-arena::before {
+    content:'';
+    position:absolute; inset:0;
+    background: repeating-linear-gradient(
+      175deg,
+      transparent 0px, transparent 18px,
+      rgba(100,181,246,0.12) 18px, rgba(100,181,246,0.12) 20px
+    );
+    pointer-events: none;
+    border-radius: 14px;
+  }
+  .rain-drop {
+    position: absolute;
+    font-size: 22px;
+    pointer-events: none;
+    user-select: none;
+    animation: rain-fall linear forwards;
+    filter: drop-shadow(0 2px 3px rgba(0,100,255,0.3));
+  }
+  @keyframes rain-fall {
+    0%   { transform: translateY(-30px) rotate(-10deg); opacity: 1; }
+    85%  { opacity: 1; }
+    100% { transform: translateY(230px) rotate(-10deg); opacity: 0; }
+  }
+  #basket {
+    position: absolute;
+    bottom: 18px;
+    font-size: 44px;
+    line-height: 1;
+    transition: left 0.06s linear;
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.25));
+    z-index: 5;
+    cursor: grab;
+  }
+  #basket.caught-flash {
+    animation: caught-anim 0.25s ease;
+  }
+  @keyframes caught-anim {
+    0%   { transform: scale(1); }
+    50%  { transform: scale(1.25) rotate(-8deg); }
+    100% { transform: scale(1); }
+  }
+  #basket-water-label {
+    position: absolute; top: 7px; left: 50%; transform: translateX(-50%);
+    font-family: 'Fredoka One', cursive; font-size: 13px;
+    background: rgba(255,255,255,0.88); padding: 2px 10px; border-radius: 20px;
+    color: #1565C0; white-space: nowrap; z-index:6;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  }
+  #water-bar-wrap {
+    width: 100%; height: 14px;
+    background: #E0E0E0; border-radius: 8px; overflow: hidden; margin: 6px 0;
+  }
+  #water-fill-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #1565C0, #42A5F5, #80DEEA);
+    border-radius: 8px;
+    transition: width 0.25s;
+  }
+  .drop-caught-fx {
+    position: absolute;
+    font-size: 16px;
+    pointer-events: none;
+    animation: fx-pop 0.55s ease forwards;
+    z-index: 10;
+  }
+  @keyframes fx-pop {
+    0%   { opacity:1; transform: scale(0.5) translateY(0); }
+    100% { opacity:0; transform: scale(1.4) translateY(-40px); }
+  }
+  /* Arrow buttons */
+  #arrow-btns {
+    display: flex; gap: 16px; justify-content: center; margin-top: 6px;
+  }
+  .arrow-btn {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    border: none;
+    font-size: 28px;
+    background: linear-gradient(135deg, #42A5F5, #1565C0);
+    color: white;
+    box-shadow: 0 4px 0 #0D47A1, 0 0 12px rgba(66,165,245,0.4);
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.1s;
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .arrow-btn:active {
+    transform: translateY(3px) scale(0.95);
+    box-shadow: 0 1px 0 #0D47A1;
+  }
+
+  /* ===== MINIGAME: SUNLIGHT ===== */
+  #sun-game {
+    position: relative;
+    width: 100%; height: 210px;
+    background: radial-gradient(ellipse at 50% -10%, #FFF176, #FFF9C4 40%, #E3F2FD 100%);
+    border-radius: 16px; overflow: hidden;
+    margin: 8px 0;
+    border: 3px solid #FFD700;
+    box-shadow: 0 0 18px rgba(255,215,0,0.25);
+  }
+  /* animated shimmer background */
+  #sun-game::before {
+    content:'';
+    position:absolute; inset:0; border-radius:14px;
+    background: radial-gradient(ellipse at 50% 0%, rgba(255,236,0,0.18) 0%, transparent 70%);
+    animation: shimmer-pulse 2.5s ease-in-out infinite;
+    pointer-events:none;
+  }
+  @keyframes shimmer-pulse { 0%,100%{opacity:0.6;} 50%{opacity:1;} }
+
+  .sun-item {
+    position: absolute;
+    font-size: 30px;
+    cursor: pointer;
+    user-select: none;
+    animation: item-fall linear forwards;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
+  }
+  .sun-item.bad { filter: drop-shadow(0 2px 6px rgba(200,0,0,0.3)); }
+
+  @keyframes item-fall {
+    0%   { transform: translateY(-36px) rotate(0deg);   opacity: 1; }
+    85%  { opacity: 1; }
+    100% { transform: translateY(220px) rotate(30deg); opacity: 0; }
+  }
+  .sun-item:active { transform: scale(0.75) !important; }
+
+  #sun-score-label {
+    position: absolute; top: 7px; left: 50%; transform: translateX(-50%);
+    font-family: 'Fredoka One', cursive; font-size: 13px;
+    background: rgba(255,255,255,0.93); padding: 3px 12px; border-radius: 20px;
+    color: #E65100; white-space: nowrap; z-index:6;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.12);
+  }
+  /* Sun progress bar */
+  #sun-bar-wrap {
+    width: 100%; height: 14px;
+    background: #E0E0E0; border-radius: 8px; overflow: hidden; margin: 6px 0;
+    position: relative;
+  }
+  #sun-fill-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #FFB300, #FFD700, #FFF176);
+    border-radius: 8px;
+    transition: width 0.25s;
+    position: relative;
+  }
+  #sun-fill-bar::after {
+    content:'☀️';
+    position:absolute; right:-2px; top:50%;
+    transform: translateY(-50%);
+    font-size:14px; line-height:1;
+  }
+  /* penalty flash */
+  .penalty-fx {
+    position: absolute;
+    font-family: 'Fredoka One', cursive;
+    font-size: 20px;
+    color: #E53935;
+    pointer-events: none;
+    animation: penalty-float 0.8s ease forwards;
+    z-index: 20;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.25);
+  }
+  @keyframes penalty-float {
+    0%   { opacity:1; transform: scale(1) translateY(0); }
+    100% { opacity:0; transform: scale(1.3) translateY(-50px); }
+  }
+  .good-fx {
+    position: absolute;
+    font-size: 18px;
+    pointer-events: none;
+    animation: penalty-float 0.6s ease forwards;
+    z-index: 20;
+  }
+  /* shake on penalty */
+  @keyframes shake-card {
+    0%,100%{transform:translateX(0);}
+    20%{transform:translateX(-6px);}
+    40%{transform:translateX(6px);}
+    60%{transform:translateX(-4px);}
+    80%{transform:translateX(4px);}
+  }
+  .shake { animation: shake-card 0.35s ease; }
+
+  /* ===== MINIGAME: BUGS ===== */
+  #bugs-game {
+    position: relative;
+    width: 100%; height: 200px;
+    background: linear-gradient(180deg, #F3E5F5, #E1BEE7);
+    border-radius: 16px; overflow: hidden;
+    margin: 12px 0;
+    border: 3px solid #CE93D8;
+  }
+  .bug {
+    position: absolute;
+    font-size: 30px;
+    cursor: pointer;
+    user-select: none;
+    animation: bug-wander linear infinite;
+    transition: transform 0.1s;
+  }
+  .bug:active { transform: scale(0.5); }
+  @keyframes bug-wander {
+    0%   { transform: translate(0,0) rotate(0deg); }
+    25%  { transform: translate(20px,-15px) rotate(10deg); }
+    50%  { transform: translate(-10px,10px) rotate(-5deg); }
+    75%  { transform: translate(15px,5px) rotate(8deg); }
+    100% { transform: translate(0,0) rotate(0deg); }
+  }
+  #bugs-label {
+    position: absolute; top: 8px; left: 50%; transform: translateX(-50%);
+    font-family: 'Fredoka One', cursive; font-size: 13px;
+    background: rgba(255,255,255,0.9); padding: 2px 10px; border-radius: 20px;
+    color: #6A1B9A; white-space: nowrap;
+  }
+
+  /* ===== RESULT OVERLAY ===== */
+  #result-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 200;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.3s;
+  }
+  #result-overlay.show { opacity:1; pointer-events: all; }
+  #result-box {
+    background: white;
+    border-radius: 24px;
+    padding: 32px 28px;
+    text-align: center;
+    max-width: 320px; width: 90%;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  }
+  #result-emoji { font-size: 64px; margin-bottom: 8px; }
+  #result-title {
+    font-family: 'Fredoka One', cursive; font-size: 28px; color: #2E7D32;
+    margin-bottom: 8px;
+  }
+  #result-msg { font-size: 15px; color: #555; margin-bottom: 20px; }
+
+  /* ===== FINAL BLOOM ===== */
+  #bloom-screen {
+    background: transparent;
+  }
+  #bloom-canvas {
+    position: fixed; inset: 0;
+    pointer-events: none; z-index: 50;
+  }
+  #big-flower {
+    position: relative; z-index: 60;
+    animation: bloom-in 2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    transform: scale(0);
+  }
+  @keyframes bloom-in {
+    0%   { transform: scale(0) rotate(-15deg); }
+    60%  { transform: scale(1.15) rotate(3deg); }
+    100% { transform: scale(1) rotate(0deg); }
+  }
+  #big-flower-head {
+    width: 200px; height: 200px;
+    position: relative;
+    margin: 0 auto;
+  }
+  .big-petal {
+    position: absolute;
+    width: 40px; height: 70px;
+    background: linear-gradient(to bottom, #FFD54F, #FF8F00);
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    left: 50%; top: 50%;
+    transform-origin: bottom center;
+    animation: petal-pop 0.5s ease forwards;
+    opacity: 0;
+    filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.2));
+  }
+  @keyframes petal-pop {
+    0% { opacity:0; transform-origin: bottom center; transform: var(--base-transform) scale(0); }
+    70% { opacity:1; transform: var(--base-transform) scale(1.1); }
+    100% { opacity:1; transform: var(--base-transform) scale(1); }
+  }
+  #big-center {
+    position: absolute;
+    width: 90px; height: 90px;
+    background: radial-gradient(circle at 38% 32%, #A1887F, #3E2723);
+    border-radius: 50%;
+    top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    z-index: 2;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4), inset 0 -6px 12px rgba(0,0,0,0.3);
+    animation: center-pop 0.6s 1.5s ease backwards;
+  }
+  @keyframes center-pop {
+    0% { transform: translate(-50%,-50%) scale(0); }
+    70% { transform: translate(-50%,-50%) scale(1.15); }
+    100% { transform: translate(-50%,-50%) scale(1); }
+  }
+  #big-center::after {
+    content:'🌻';
+    position:absolute; top:50%; left:50%;
+    transform:translate(-50%,-50%);
+    font-size: 44px;
+  }
+
+  #sparkle-ring {
+    position: absolute; inset: -30px;
+    pointer-events: none;
+    animation: spin-slow 8s linear infinite;
+  }
+  .sparkle-dot {
+    position: absolute;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #FFD700;
+    left: 50%; top: 50%;
+  }
+
+  /* ===== BIRTHDAY CARD ===== */
+  #birthday-card {
+    position: fixed; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 300;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.8s;
+  }
+  #birthday-card.show { opacity:1; pointer-events:all; }
+
+  .postal {
+    background: linear-gradient(135deg, #FFF9C4 0%, #FFF3E0 30%, #FCE4EC 60%, #F3E5F5 100%);
+    border-radius: 28px;
+    padding: 36px 30px;
+    max-width: 360px; width: 90%;
+    text-align: center;
+    box-shadow:
+      0 0 0 4px #FFD700,
+      0 0 0 8px #FF69B4,
+      0 0 0 12px #FFD700,
+      0 30px 80px rgba(0,0,0,0.3);
+    position: relative;
+    overflow: hidden;
+    animation: card-arrive 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    transform: scale(0) rotate(10deg);
+  }
+  @keyframes card-arrive {
+    0%   { transform: scale(0) rotate(10deg); }
+    70%  { transform: scale(1.05) rotate(-2deg); }
+    100% { transform: scale(1) rotate(0deg); }
+  }
+
+  .postal-flowers {
+    font-size: 28px;
+    letter-spacing: 4px;
+    margin-bottom: 12px;
+    animation: bounce-row 2s ease infinite;
+  }
+  @keyframes bounce-row { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-6px);} }
+
+  .postal-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 38px;
+    background: linear-gradient(135deg, #E91E63, #FF5722, #FF9800, #4CAF50, #2196F3, #9C27B0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 4px;
+    text-shadow: none;
+    line-height: 1.1;
+  }
+
+  .postal-name {
+    font-family: 'Fredoka One', cursive;
+    font-size: 52px;
+    color: #E91E63;
+    text-shadow: 3px 3px 0 #FF69B4, -1px -1px 0 #C2185B;
+    margin-bottom: 12px;
+    animation: wiggle-name 0.5s 2s ease infinite;
+  }
+  @keyframes wiggle-name {
+    0%,100%{transform:rotate(0deg) scale(1);}
+    25%{transform:rotate(-3deg) scale(1.05);}
+    75%{transform:rotate(3deg) scale(1.05);}
+  }
+
+  .postal-message {
+    font-size: 16px;
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 16px;
+    font-weight: 600;
+  }
+
+  .postal-big-flower { font-size: 56px; margin: 8px 0; animation: spin-slow 10s linear infinite; }
+
+  .postal-confetti {
+    position: absolute; pointer-events: none;
+    font-size: 18px;
+    animation: confetti-fly 3s ease-in-out infinite;
+  }
+  @keyframes confetti-fly {
+    0% { transform: translateY(0) rotate(0deg); opacity:1; }
+    100% { transform: translateY(-80px) rotate(720deg); opacity:0; }
+  }
+
+  .restart-btn {
+    margin-top: 16px;
+    font-size: 14px;
+    opacity: 0.7;
+    cursor: pointer;
+    text-decoration: underline;
+    color: #666;
+    font-family: 'Nunito', sans-serif;
+  }
+
+  /* ===== PARTICLES ===== */
+  #particles {
+    position: fixed; inset: 0; pointer-events: none; z-index: 400; overflow: hidden;
+  }
+  .particle {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    animation: particle-fall linear forwards;
+  }
+  @keyframes particle-fall {
+    0%   { transform: translateY(-20px) rotate(0deg); opacity:1; }
+    100% { transform: translateY(100vh) rotate(720deg); opacity:0; }
+  }
+
+  /* ===== TIMER ===== */
+  #mini-timer {
+    position: absolute; top: 10px; right: 10px;
+    font-family: 'Fredoka One', cursive;
+    font-size: 22px;
+    color: #E53935;
+    background: rgba(255,255,255,0.9);
+    border-radius: 50%;
+    width: 44px; height: 44px;
+    display: flex; align-items:center; justify-content:center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+
+  /* ===== INTRO ===== */
+  #intro-emoji { font-size: 64px; margin-bottom: 12px; animation: bounce-row 2s infinite; }
+  #intro-screen { background: transparent; }
+
+  .stage-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #4CAF50, #1B5E20);
+    color: white;
+    font-family: 'Fredoka One', cursive;
+    font-size: 13px;
+    padding: 4px 14px;
+    border-radius: 20px;
+    margin-bottom: 12px;
+  }
+</style>
+</head>
+<body>
+
+<!-- Background -->
+<div class="sun-bg"></div>
+<div class="clouds" id="clouds"></div>
+<div id="particles"></div>
+
+<!-- Progress -->
+<div id="progress-bar"><div id="progress-fill" style="width:0%"></div></div>
+<div id="stage-label">🌱 Etapa 1/5</div>
+
+<!-- Sunflower Scene -->
+<div id="sunflower-scene">
+  <div class="flower-head" id="flower-head">
+    <div class="petals-ring" id="petals-ring"></div>
+    <div class="flower-center"></div>
+  </div>
+  <div class="stem" id="stem" style="height:0px"></div>
+  <div class="soil-mound" id="soil" style="--sprout-display:none"></div>
+</div>
+
+<!-- ===== SCREEN: INTRO ===== -->
+<div class="screen" id="intro-screen">
+  <div class="game-card">
+    <div id="intro-emoji">🌻</div>
+    <div class="card-title">¡El Girasol de Lenita!</div>
+    <div class="card-subtitle">Ayuda a este girasol especial a crecer superando 5 retos mágicos. ¡Al final tendrás una sorpresa increíble! 🎁</div>
+    <button class="btn btn-primary" onclick="startGame()">¡Comenzar! 🌱</button>
+  </div>
+</div>
+
+<!-- ===== SCREEN: STAGE INTRO ===== -->
+<div class="screen hidden" id="stage-intro-screen">
+  <div class="game-card">
+    <div class="stage-badge" id="stage-badge">Etapa 1</div>
+    <div class="card-title" id="stage-title">¡Semilla Lista!</div>
+    <div class="card-subtitle" id="stage-desc">Texto de descripción</div>
+    <button class="btn btn-yellow" id="stage-play-btn" onclick="startMinigame()">¡Jugar! 🎮</button>
+  </div>
+</div>
+
+<!-- ===== SCREEN: GAME ===== -->
+<div class="screen hidden" id="game-screen">
+  <div class="game-card" style="position:relative">
+    <div id="mini-timer">15</div>
+    <div class="card-title" id="game-title">Minijuego</div>
+    <div class="card-subtitle" id="game-instructions">instrucciones</div>
+
+    <!-- TAP GAME -->
+    <div id="tap-game" style="display:none">
+      <div id="tap-area" onclick="handleTap(event)">💧</div>
+      <div style="font-family:'Fredoka One',cursive; font-size:13px; color:#888; margin-bottom:4px;">
+        <span id="tap-count">0</span> / <span id="tap-target">20</span> toques
+      </div>
+      <div id="tap-progress"><div id="tap-fill" style="width:0%"></div></div>
+    </div>
+
+    <!-- MEMORY GAME -->
+    <div id="memory-game" style="display:none">
+      <div id="memory-grid"></div>
+      <div style="font-family:'Fredoka One',cursive; font-size:13px; color:#888; margin-top:6px;">
+        Parejas: <span id="pairs-found">0</span>/8
+      </div>
+    </div>
+
+    <!-- WATER / BASKET GAME -->
+    <div id="water-game-wrap" style="display:none">
+      <div id="basket-arena">
+        <div id="basket-water-label">💧 Agua: <span id="water-pct">0</span>% — ¡Llena la canasta!</div>
+        <div id="basket">🧺</div>
+      </div>
+      <div id="water-bar-wrap"><div id="water-fill-bar" style="width:0%"></div></div>
+      <div id="arrow-btns">
+        <button class="arrow-btn" id="btn-left"  ontouchstart="startMove(-1)" ontouchend="stopMove()" onmousedown="startMove(-1)" onmouseup="stopMove()">◀</button>
+        <button class="arrow-btn" id="btn-right" ontouchstart="startMove(1)"  ontouchend="stopMove()" onmousedown="startMove(1)"  onmouseup="stopMove()">▶</button>
+      </div>
+    </div>
+
+    <!-- SUN GAME -->
+    <div id="sun-game-wrap" style="display:none">
+      <div id="sun-game">
+        <div id="sun-score-label">☀️ <span id="sun-caught">0</span>/10 &nbsp;|&nbsp; ⚡ -<span id="sun-penalty">0</span></div>
+      </div>
+      <div id="sun-bar-wrap"><div id="sun-fill-bar" style="width:0%"></div></div>
+      <div style="font-family:'Fredoka One',cursive; font-size:12px; color:#888; display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+        <span>☀️ +1 pto</span><span>🌙❄️🌈⚡🍄 -1 pto</span>
+      </div>
+    </div>
+
+    <!-- BUGS GAME -->
+    <div id="bugs-game-wrap" style="display:none">
+      <div id="bugs-game">
+        <div id="bugs-label">🐛 Bichos: <span id="bugs-left">8</span></div>
+      </div>
+      <div style="font-family:'Fredoka One',cursive; font-size:13px; color:#888;">
+        ¡Aplasta todos los bichos! 🥊
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SCREEN: BLOOM ===== -->
+<div class="screen hidden" id="bloom-screen">
+  <div id="big-flower" style="text-align:center">
+    <div id="big-flower-head">
+      <div id="sparkle-ring"></div>
+      <div id="big-center"></div>
+    </div>
+    <div style="font-family:'Fredoka One',cursive; font-size:22px; color:white; text-shadow:0 2px 8px rgba(0,0,0,0.3); margin-top:16px;">
+      ¡El girasol ha florecido! 🎉
+    </div>
+  </div>
+</div>
+
+<!-- ===== BIRTHDAY CARD ===== -->
+<div id="birthday-card">
+  <div class="postal">
+    <div class="postal-confetti" style="top:10px;left:10px;animation-delay:0s">🌸</div>
+    <div class="postal-confetti" style="top:10px;right:10px;animation-delay:0.3s">⭐</div>
+    <div class="postal-confetti" style="top:40px;left:20%;animation-delay:0.6s">🎊</div>
+    <div class="postal-confetti" style="top:40px;right:20%;animation-delay:0.9s">💫</div>
+    <div class="postal-confetti" style="top:20px;left:50%;animation-delay:1.2s">🌟</div>
+
+    <div class="postal-flowers">🌻🌸🌻🌸🌻</div>
+    <div class="postal-title">¡Feliz Cumpleaños!</div>
+    <div class="postal-name">Lenita</div>
+    <div class="postal-big-flower">🌻</div>
+    <div class="postal-message">
+      Que este día brille tanto<br>
+      como el girasol más hermoso.<br>
+      ¡Te deseo un día lleno de<br>
+      amor, alegría y flores! 💛
+    </div>
+    <div class="postal-flowers">🎂🎁🎈🎉🎊</div>
+    <div class="restart-btn" onclick="restartGame()">Jugar de nuevo 🔄</div>
+  </div>
+</div>
+
+<!-- Result overlay -->
+<div id="result-overlay">
+  <div id="result-box">
+    <div id="result-emoji">🎉</div>
+    <div id="result-title">¡Bien hecho!</div>
+    <div id="result-msg">El girasol está creciendo...</div>
+    <button class="btn btn-primary" onclick="nextStage()">¡Siguiente! →</button>
+  </div>
+</div>
+
+<canvas id="bloom-canvas"></canvas>
+
+<script>
+// =============================================
+// GAME DATA
+// =============================================
+const STAGES = [
+  {
+    name: "La Semilla",
+    badge: "🌱 Etapa 1 / 5",
+    title: "¡Planta la Semilla!",
+    desc: "La semillita necesita que prepares la tierra. ¡Dale 20 palmadas a la tierra para enterrarla bien!",
+    game: "tap",
+    icon: "🌱",
+    stemHeight: 0,
+    gameTitle: "¡Prepara la Tierra!",
+    gameInstr: "Toca el suelo rapidamente 20 veces para prepararlo",
+    tapTarget: 20,
+    tapEmoji: "🌱",
+    growthMsg: "¡La semilla está plantada! 🌱"
+  },
+  {
+    name: "El Brote",
+    badge: "🌿 Etapa 2 / 5",
+    title: "¡Dale Agua!",
+    desc: "El brote necesita lluvia para crecer. ¡Mueve la canasta con las flechas ◀ ▶ y atrapa todas las gotas antes de que toquen el suelo!",
+    game: "water",
+    icon: "💧",
+    stemHeight: 50,
+    gameTitle: "¡Recoge la Lluvia!",
+    gameInstr: "Usa ◀ ▶ para mover la canasta y atrapar las gotitas 💧",
+    growthMsg: "¡El brote ha brotado! 🌿"
+  },
+  {
+    name: "El Tallo",
+    badge: "🌿 Etapa 3 / 5",
+    title: "¡Luz Solar!",
+    desc: "El tallo crece hacia el sol ☀️. ¡Toca solo los soles para ganar puntos! Cuidado: tocar lunas 🌙, rayos ⚡ u otros elementos te quitará puntos.",
+    game: "sun",
+    icon: "☀️",
+    stemHeight: 110,
+    gameTitle: "¡Atrapa el Sol!",
+    gameInstr: "Toca solo ☀️ (+1). Evita 🌙❄️🌈⚡🍄 (-1 punto)",
+    growthMsg: "¡El tallo está creciendo fuerte! 🌿"
+  },
+  {
+    name: "El Capullo",
+    badge: "🌼 Etapa 4 / 5",
+    title: "¡Ahuyenta los Bichos!",
+    desc: "¡Los bichos quieren comerse tu girasol! Aplástalos a todos antes de que sea tarde.",
+    game: "bugs",
+    icon: "🐛",
+    stemHeight: 165,
+    gameTitle: "¡Aleja los Bichos!",
+    gameInstr: "Toca los bichos para aplastarlos a todos",
+    growthMsg: "¡El capullo está sano y salvo! 🌼"
+  },
+  {
+    name: "La Flor",
+    badge: "🌻 Etapa 5 / 5",
+    title: "¡Memoria de Flores!",
+    desc: "El último paso: el girasol guarda 8 secretos en sus pétalos. ¡Encuentra las 8 parejas entre 16 cuadros para que florezca!",
+    game: "memory",
+    icon: "🌻",
+    stemHeight: 200,
+    gameTitle: "¡Memoria Floral!",
+    gameInstr: "Encuentra las 8 parejas entre 16 cuadros 🌸",
+    growthMsg: "¡El girasol está a punto de florecer! 🌻"
+  }
+];
+
+let currentStage = 0;
+let gameActive = false;
+let timerInterval = null;
+let timeLeft = 0;
+
+// =============================================
+// INIT
+// =============================================
+window.onload = () => {
+  createClouds();
+  buildSmallFlower();
+};
+
+function createClouds() {
+  const c = document.getElementById('clouds');
+  const sizes = [[80,30],[120,40],[60,25],[100,35]];
+  const positions = [10,25,55,70];
+  sizes.forEach((s, i) => {
+    const d = document.createElement('div');
+    d.className = 'cloud';
+    d.style.cssText = `
+      width:${s[0]}px; height:${s[1]}px;
+      top:${10+i*8}px;
+      animation-duration:${20+i*8}s;
+      animation-delay:${-i*5}s;
+    `;
+    d.innerHTML = `<div style="position:absolute;width:${s[0]*0.6}px;height:${s[0]*0.6}px;background:white;border-radius:50%;top:-40%;left:15%"></div>`;
+    c.appendChild(d);
+  });
+}
+
+function buildSmallFlower() {
+  const ring = document.getElementById('petals-ring');
+  ring.innerHTML = '';
+  const count = 12;
+  for (let i = 0; i < count; i++) {
+    const p = document.createElement('div');
+    p.className = 'petal';
+    const angle = (i / count) * 360;
+    const rad = Math.PI * 2 * i / count;
+    const r = 48;
+    const tx = Math.sin(rad) * r;
+    const ty = -Math.cos(rad) * r;
+    p.style.cssText = `
+      margin-left:-11px; margin-top:-19px;
+      transform: translate(${tx}px, ${ty}px) rotate(${angle}deg);
+    `;
+    ring.appendChild(p);
+  }
+}
+
+// =============================================
+// SCREENS
+// =============================================
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+}
+
+function startGame() {
+  currentStage = 0;
+  updatePlant();
+  showStageIntro();
+}
+
+function showStageIntro() {
+  const s = STAGES[currentStage];
+  document.getElementById('stage-badge').textContent = s.badge;
+  document.getElementById('stage-title').textContent = s.title;
+  document.getElementById('stage-desc').textContent = s.desc;
+  document.getElementById('stage-label').textContent = s.badge;
+  document.getElementById('progress-fill').style.width = (currentStage / STAGES.length * 100) + '%';
+  showScreen('stage-intro-screen');
+}
+
+// =============================================
+// PLANT GROWTH
+// =============================================
+function updatePlant() {
+  const s = STAGES[currentStage];
+  const stem = document.getElementById('stem');
+  const head = document.getElementById('flower-head');
+  const soil = document.getElementById('soil');
+
+  stem.style.height = s.stemHeight + 'px';
+
+  if (currentStage >= 1) {
+    soil.style.setProperty('--sprout-display', 'block');
+  }
+  if (currentStage >= 4) {
+    head.style.display = 'block';
+  }
+}
+
+// =============================================
+// MINIGAMES
+// =============================================
+function startMinigame() {
+  const s = STAGES[currentStage];
+  document.getElementById('game-title').textContent = s.gameTitle;
+  document.getElementById('game-instructions').textContent = s.gameInstr;
+
+  // hide all game divs
+  ['tap-game','memory-game','water-game-wrap','sun-game-wrap','bugs-game-wrap']
+    .forEach(id => document.getElementById(id).style.display = 'none');
+
+  // cancel basket movement loop if coming from water game
+  if (basketMoveRAF) { cancelAnimationFrame(basketMoveRAF); basketMoveRAF = null; }
+  basketDir = 0;
+
+  gameActive = true;
+
+  if (s.game === 'tap')    initTapGame(s);
+  if (s.game === 'water')  initWaterGame();
+  if (s.game === 'sun')    initSunGame();
+  if (s.game === 'bugs')   initBugsGame();
+  if (s.game === 'memory') initMemoryGame();
+
+  showScreen('game-screen');
+}
+
+// ---------- TAP ----------
+let tapCount = 0;
+function initTapGame(s) {
+  tapCount = 0;
+  const target = s.tapTarget || 20;
+  document.getElementById('tap-area').innerHTML = s.tapEmoji || '🌱';
+  document.getElementById('tap-count').textContent = 0;
+  document.getElementById('tap-target').textContent = target;
+  document.getElementById('tap-fill').style.width = '0%';
+  document.getElementById('tap-game').style.display = 'block';
+  startTimer(18, () => winGame());
+}
+
+function handleTap(e) {
+  if (!gameActive) return;
+  tapCount++;
+  const target = STAGES[currentStage].tapTarget || 20;
+  const pct = Math.min(100, (tapCount / target) * 100);
+  document.getElementById('tap-count').textContent = tapCount;
+  document.getElementById('tap-fill').style.width = pct + '%';
+
+  // burst
+  const area = document.getElementById('tap-area');
+  const burst = document.createElement('div');
+  burst.className = 'tap-burst';
+  burst.textContent = ['💚','🌱','✨','🌿','⚡'][Math.floor(Math.random()*5)];
+  burst.style.left = (e.offsetX || 70) + 'px';
+  burst.style.top  = (e.offsetY || 70) + 'px';
+  area.appendChild(burst);
+  setTimeout(() => burst.remove(), 700);
+
+  if (tapCount >= target) {
+    clearInterval(timerInterval);
+    gameActive = false;
+    setTimeout(winGame, 300);
+  }
+}
+
+// ---------- BASKET WATER ----------
+let waterCount = 0;
+let waterInterval = null;
+let basketX = 50; // percent
+let basketDir = 0; // -1, 0, 1
+let basketMoveRAF = null;
+const BASKET_SPEED = 1.4; // % per frame
+const BASKET_WIDTH_PCT = 14; // collision width %
+const WATER_TARGET = 100;
+
+function initWaterGame() {
+  waterCount = 0;
+  basketX = 50;
+  basketDir = 0;
+  document.getElementById('water-fill-bar').style.width = '0%';
+  document.getElementById('water-pct').textContent = '0';
+  document.getElementById('water-game-wrap').style.display = 'block';
+
+  const basket = document.getElementById('basket');
+  basket.style.left = basketX + '%';
+  basket.style.transform = 'translateX(-50%)';
+
+  waterInterval = setInterval(spawnRainDrop, 700);
+  basketMoveRAF = requestAnimationFrame(basketMoveLoop);
+  startTimer(25, () => {
+    clearInterval(waterInterval);
+    cancelAnimationFrame(basketMoveRAF);
+    if (waterCount >= WATER_TARGET) winGame(); else loseGame();
+  });
+}
+
+function basketMoveLoop() {
+  if (!gameActive) return;
+  if (basketDir !== 0) {
+    basketX += basketDir * BASKET_SPEED;
+    basketX = Math.max(8, Math.min(92, basketX));
+    const basket = document.getElementById('basket');
+    basket.style.left = basketX + '%';
+  }
+  basketMoveRAF = requestAnimationFrame(basketMoveLoop);
+}
+
+function startMove(dir) {
+  if (!gameActive) return;
+  basketDir = dir;
+}
+function stopMove() {
+  basketDir = 0;
+}
+
+function spawnRainDrop() {
+  if (!gameActive) return;
+  const arena = document.getElementById('basket-arena');
+  const drop = document.createElement('div');
+  drop.className = 'rain-drop';
+  const dropLeft = 5 + Math.random() * 90; // percent
+  drop.textContent = ['💧','🌧️','💦'][Math.floor(Math.random()*3)];
+  drop.style.left = dropLeft + '%';
+  drop.style.top = '-30px';
+  const duration = 1.4 + Math.random() * 0.8;
+  drop.style.animationDuration = duration + 's';
+  arena.appendChild(drop);
+
+  // Collision check: poll while drop is falling
+  const startTime = performance.now();
+  const totalMs = duration * 1000;
+  const arenaH = arena.offsetHeight || 220;
+  // basket bottom is at ~18px from bottom, height ~44px
+  const basketTopPct = (arenaH - 18 - 44) / arenaH * 100; // ~73%
+
+  function checkCollision() {
+    if (!gameActive || !drop.isConnected) return;
+    const elapsed = performance.now() - startTime;
+    const progress = elapsed / totalMs; // 0→1
+    const dropTopPct = progress * 100 - 2; // approximate top position %
+
+    if (dropTopPct >= basketTopPct - 5 && dropTopPct <= basketTopPct + 12) {
+      // Check horizontal overlap
+      const dropCenter = dropLeft;
+      const basketLeft = basketX - BASKET_WIDTH_PCT / 2;
+      const basketRight = basketX + BASKET_WIDTH_PCT / 2;
+      if (dropCenter >= basketLeft && dropCenter <= basketRight) {
+        drop.remove();
+        catchDrop(dropLeft, (basketTopPct / 100) * arenaH);
+        return;
+      }
+    }
+    if (progress < 1.05) requestAnimationFrame(checkCollision);
+    else { try { drop.remove(); } catch(e){} }
+  }
+  requestAnimationFrame(checkCollision);
+}
+
+function catchDrop(leftPct, topPx) {
+  waterCount = Math.min(WATER_TARGET, waterCount + 10);
+  const pct = waterCount;
+  document.getElementById('water-fill-bar').style.width = pct + '%';
+  document.getElementById('water-pct').textContent = Math.floor(pct);
+
+  // Visual FX
+  const arena = document.getElementById('basket-arena');
+  const fx = document.createElement('div');
+  fx.className = 'drop-caught-fx';
+  fx.textContent = ['✨','💦','🎵','💧'][Math.floor(Math.random()*4)];
+  fx.style.left = leftPct + '%';
+  fx.style.top  = (topPx - 20) + 'px';
+  arena.appendChild(fx);
+  setTimeout(() => fx.remove(), 600);
+
+  // Basket bounce
+  const basket = document.getElementById('basket');
+  basket.classList.remove('caught-flash');
+  void basket.offsetWidth;
+  basket.classList.add('caught-flash');
+
+  if (waterCount >= WATER_TARGET) {
+    clearInterval(waterInterval);
+    clearInterval(timerInterval);
+    cancelAnimationFrame(basketMoveRAF);
+    gameActive = false;
+    setTimeout(winGame, 300);
+  }
+}
+
+function handleWaterTap() {}
+
+// ---------- SUN ----------
+let sunCaught = 0;
+let sunPenalty = 0;
+let sunInterval = null;
+const SUN_TARGET = 10;
+const GOOD_ITEMS = ['☀️'];
+const BAD_ITEMS  = ['🌙','❄️','🌈','⚡','🍄','🌧️','🌪️','🌑'];
+
+function initSunGame() {
+  sunCaught = 0;
+  sunPenalty = 0;
+  document.getElementById('sun-caught').textContent = '0';
+  document.getElementById('sun-penalty').textContent = '0';
+  document.getElementById('sun-fill-bar').style.width = '0%';
+  document.getElementById('sun-game-wrap').style.display = 'block';
+  // spawn mix of good and bad items
+  sunInterval = setInterval(spawnSunItem, 650);
+  startTimer(22, () => {
+    clearInterval(sunInterval);
+    const net = sunCaught - sunPenalty;
+    if (net >= SUN_TARGET) winGame(); else loseGame();
+  });
+}
+
+function spawnSunItem() {
+  if (!gameActive) return;
+  const game = document.getElementById('sun-game');
+
+  // 45% chance good, 55% bad — ramps difficulty
+  const isGood = Math.random() < 0.45;
+  const emoji = isGood
+    ? GOOD_ITEMS[0]
+    : BAD_ITEMS[Math.floor(Math.random() * BAD_ITEMS.length)];
+
+  const item = document.createElement('div');
+  item.className = 'sun-item' + (isGood ? '' : ' bad');
+  item.textContent = emoji;
+  item.dataset.good = isGood ? '1' : '0';
+  item.style.left = (4 + Math.random() * 86) + '%';
+  item.style.top = '-36px';
+  const dur = 1.6 + Math.random() * 1.0;
+  item.style.animationDuration = dur + 's';
+
+  item.addEventListener('pointerdown', (e) => {
+    e.stopPropagation();
+    if (!gameActive || !item.isConnected) return;
+    const rect = game.getBoundingClientRect();
+    const fx_x = parseFloat(item.style.left);
+    const fx_y = (e.clientY - rect.top);
+    item.remove();
+
+    if (item.dataset.good === '1') {
+      sunCaught++;
+      document.getElementById('sun-caught').textContent = sunCaught;
+      const net = sunCaught - sunPenalty;
+      const pct = Math.max(0, Math.min(100, net / SUN_TARGET * 100));
+      document.getElementById('sun-fill-bar').style.width = pct + '%';
+      // good FX
+      spawnSunFx(game, fx_x, fx_y, '✨', false);
+      if (net >= SUN_TARGET) {
+        clearInterval(sunInterval);
+        clearInterval(timerInterval);
+        gameActive = false;
+        setTimeout(winGame, 300);
+      }
+    } else {
+      sunPenalty++;
+      document.getElementById('sun-penalty').textContent = sunPenalty;
+      const net = sunCaught - sunPenalty;
+      const pct = Math.max(0, Math.min(100, net / SUN_TARGET * 100));
+      document.getElementById('sun-fill-bar').style.width = pct + '%';
+      // penalty FX + shake
+      spawnSunFx(game, fx_x, fx_y, '-1 ☠️', true);
+      const card = document.querySelector('#game-screen .game-card');
+      card.classList.remove('shake');
+      void card.offsetWidth;
+      card.classList.add('shake');
+      setTimeout(() => card.classList.remove('shake'), 400);
+    }
+  });
+
+  game.appendChild(item);
+  setTimeout(() => { try { item.remove(); } catch(e){} }, dur * 1000 + 100);
+}
+
+function spawnSunFx(container, leftPct, topPx, text, isPenalty) {
+  const fx = document.createElement('div');
+  fx.className = isPenalty ? 'penalty-fx' : 'good-fx';
+  fx.textContent = text;
+  fx.style.left = leftPct + '%';
+  fx.style.top  = Math.max(10, topPx - 10) + 'px';
+  container.appendChild(fx);
+  setTimeout(() => fx.remove(), 900);
+}
+
+// ---------- BUGS ----------
+let bugsLeft = 0;
+let bugsInterval = null;
+function initBugsGame() {
+  bugsLeft = 8;
+  document.getElementById('bugs-left').textContent = bugsLeft;
+  document.getElementById('bugs-game-wrap').style.display = 'block';
+  const game = document.getElementById('bugs-game');
+  // clear old bugs
+  game.querySelectorAll('.bug').forEach(b => b.remove());
+
+  const bugEmojis = ['🐛','🦗','🐜','🐝','🦟','🐞','🦂','🕷️'];
+  bugEmojis.forEach((emoji, i) => {
+    const bug = document.createElement('div');
+    bug.className = 'bug';
+    bug.textContent = emoji;
+    bug.style.left = (5 + Math.random() * 75) + '%';
+    bug.style.top  = (15 + Math.random() * 65) + '%';
+    bug.style.animationDuration = (1.5 + Math.random() * 2) + 's';
+    bug.onclick = () => {
+      if (!gameActive) return;
+      bug.style.transform = 'scale(0)';
+      bug.style.opacity = '0';
+      bug.style.transition = 'all 0.2s';
+      setTimeout(() => bug.remove(), 200);
+      bugsLeft--;
+      document.getElementById('bugs-left').textContent = bugsLeft;
+      if (bugsLeft <= 0) {
+        clearInterval(timerInterval);
+        gameActive = false;
+        setTimeout(winGame, 300);
+      }
+    };
+    game.appendChild(bug);
+  });
+
+  startTimer(18, () => { if(bugsLeft <= 0) winGame(); else loseGame(); });
+}
+
+// ---------- MEMORY ----------
+let memFlipped = [];
+let memMatched = 0;
+let memLocked = false;
+const MEM_EMOJIS = ['🌻','🌸','🌺','🌼','🌞','🍀','🌷','🌿'];
+const MEM_TOTAL_PAIRS = 8;
+function initMemoryGame() {
+  memFlipped = []; memMatched = 0; memLocked = false;
+  document.getElementById('pairs-found').textContent = '0';
+  const grid = document.getElementById('memory-grid');
+  grid.innerHTML = '';
+  document.getElementById('memory-game').style.display = 'block';
+
+  const cards = [...MEM_EMOJIS, ...MEM_EMOJIS]
+    .sort(() => Math.random() - 0.5);
+
+  cards.forEach((emoji, i) => {
+    const card = document.createElement('div');
+    card.className = 'mem-card';
+    card.dataset.emoji = emoji;
+    card.dataset.index = i;
+    card.innerHTML = `
+      <div class="back front" style="position:absolute;inset:0;backface-visibility:hidden;display:flex;align-items:center;justify-content:center;border-radius:8px;background:linear-gradient(135deg,#4CAF50,#1B5E20);">🌿</div>
+      <div class="back" style="transform:rotateY(180deg);">${emoji}</div>
+    `;
+    card.onclick = () => flipCard(card);
+    grid.appendChild(card);
+  });
+  startTimer(45, () => { if(memMatched >= MEM_TOTAL_PAIRS) winGame(); else loseGame(); });
+}
+
+function flipCard(card) {
+  if (!gameActive || memLocked || card.classList.contains('flipped') || card.classList.contains('matched')) return;
+  card.classList.add('flipped');
+  memFlipped.push(card);
+  if (memFlipped.length === 2) {
+    memLocked = true;
+    const [a, b] = memFlipped;
+    if (a.dataset.emoji === b.dataset.emoji) {
+      a.classList.add('matched'); b.classList.add('matched');
+      memMatched++;
+      document.getElementById('pairs-found').textContent = memMatched;
+      memFlipped = []; memLocked = false;
+      if (memMatched >= MEM_TOTAL_PAIRS) {
+        clearInterval(timerInterval);
+        gameActive = false;
+        setTimeout(winGame, 400);
+      }
+    } else {
+      setTimeout(() => {
+        a.classList.remove('flipped'); b.classList.remove('flipped');
+        memFlipped = []; memLocked = false;
+      }, 900);
+    }
+  }
+}
+
+// =============================================
+// TIMER
+// =============================================
+function startTimer(seconds, onEnd) {
+  timeLeft = seconds;
+  document.getElementById('mini-timer').textContent = timeLeft;
+  clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    document.getElementById('mini-timer').textContent = timeLeft;
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      if (gameActive) { gameActive = false; onEnd(); }
+    }
+  }, 1000);
+}
+
+// =============================================
+// WIN / LOSE
+// =============================================
+function winGame() {
+  spawnParticles();
+  const s = STAGES[currentStage];
+  document.getElementById('result-emoji').textContent = '🌟';
+  document.getElementById('result-title').textContent = '¡Bravo!';
+  document.getElementById('result-msg').textContent = s.growthMsg;
+  document.getElementById('result-overlay').classList.add('show');
+}
+
+function loseGame() {
+  document.getElementById('result-emoji').textContent = '😅';
+  document.getElementById('result-title').textContent = '¡Casi!';
+  document.getElementById('result-msg').textContent = '¡Inténtalo de nuevo! El girasol te necesita 💪';
+  const btn = document.querySelector('#result-overlay .btn');
+  btn.textContent = '¡Reintentar! 🔄';
+  btn.onclick = retryStage;
+  document.getElementById('result-overlay').classList.add('show');
+}
+
+function retryStage() {
+  document.getElementById('result-overlay').classList.remove('show');
+  const btn = document.querySelector('#result-overlay .btn');
+  btn.textContent = '¡Siguiente! →';
+  btn.onclick = nextStage;
+  startMinigame();
+}
+
+function nextStage() {
+  document.getElementById('result-overlay').classList.remove('show');
+  currentStage++;
+
+  if (currentStage >= STAGES.length) {
+    triggerBloom();
+    return;
+  }
+
+  updatePlant();
+  showStageIntro();
+}
+
+// =============================================
+// BLOOM + BIRTHDAY
+// =============================================
+function triggerBloom() {
+  showScreen('bloom-screen');
+
+  // Build big flower
+  const head = document.getElementById('big-flower-head');
+  const count = 16;
+  for (let i = 0; i < count; i++) {
+    const p = document.createElement('div');
+    p.className = 'big-petal';
+    const angle = (i / count) * 360;
+    const rad = Math.PI * 2 * i / count;
+    const r = 68;
+    const tx = Math.sin(rad) * r - 20;
+    const ty = -Math.cos(rad) * r - 35;
+    const baseT = `translate(${tx}px,${ty}px) rotate(${angle}deg)`;
+    p.style.setProperty('--base-transform', baseT);
+    p.style.transform = baseT + ' scale(0)';
+    p.style.animationDelay = (0.8 + i * 0.08) + 's';
+    head.appendChild(p);
+  }
+
+  // Sparkles
+  const ring = document.getElementById('sparkle-ring');
+  for (let i = 0; i < 12; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'sparkle-dot';
+    const angle = (i / 12) * Math.PI * 2;
+    const r2 = 80;
+    dot.style.cssText = `
+      margin-left:-4px; margin-top:-4px;
+      transform: translate(${Math.sin(angle)*r2}px,${-Math.cos(angle)*r2}px);
+      background: ${['#FFD700','#FF69B4','#00BCD4','#76FF03'][i%4]};
+      width: ${6+Math.random()*6}px; height: ${6+Math.random()*6}px;
+      animation: pulse-sun 1s ${i*0.1}s ease infinite;
+    `;
+    ring.appendChild(dot);
+  }
+
+  // Fireworks canvas
+  startFireworks();
+
+  // After 4s show birthday card
+  setTimeout(() => {
+    document.getElementById('birthday-card').classList.add('show');
+    launchConfetti();
+  }, 4000);
+}
+
+// =============================================
+// FIREWORKS CANVAS
+// =============================================
+function startFireworks() {
+  const canvas = document.getElementById('bloom-canvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const particles = [];
+  const colors = ['#FFD700','#FF69B4','#00BCD4','#76FF03','#FF5722','#E040FB','#FFEB3B'];
+
+  function createBurst(x, y) {
+    for (let i = 0; i < 60; i++) {
+      const angle = (Math.PI * 2 / 60) * i;
+      const speed = 2 + Math.random() * 5;
+      particles.push({
+        x, y,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        life: 1,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        size: 2 + Math.random() * 4
+      });
+    }
+  }
+
+  let t = 0;
+  function loop() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => {
+      p.x += p.vx; p.y += p.vy;
+      p.vy += 0.1; p.life -= 0.015;
+      ctx.globalAlpha = p.life;
+      ctx.fillStyle = p.color;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
+      ctx.fill();
+    });
+    for (let i = particles.length-1; i >= 0; i--) {
+      if (particles[i].life <= 0) particles.splice(i, 1);
+    }
+    ctx.globalAlpha = 1;
+    t++;
+    if (t % 40 === 0 && t < 200) {
+      createBurst(
+        100 + Math.random() * (canvas.width - 200),
+        80 + Math.random() * (canvas.height * 0.6)
+      );
+    }
+    requestAnimationFrame(loop);
+  }
+  loop();
+}
+
+// =============================================
+// CONFETTI PARTICLES
+// =============================================
+function spawnParticles() {
+  const container = document.getElementById('particles');
+  const emojis = ['🌟','✨','🎉','💛','🌻','⭐'];
+  for (let i = 0; i < 12; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.cssText = `
+      left: ${Math.random()*100}%;
+      top: -20px;
+      width: 10px; height: 10px;
+      background: ${['#FFD700','#FF69B4','#4CAF50','#00BCD4'][Math.floor(Math.random()*4)]};
+      animation-duration: ${1.5+Math.random()*2}s;
+      animation-delay: ${Math.random()*0.5}s;
+      font-size: 14px;
+    `;
+    p.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+    p.style.background = 'transparent';
+    container.appendChild(p);
+    setTimeout(() => p.remove(), 3000);
+  }
+}
+
+function launchConfetti() {
+  const container = document.getElementById('particles');
+  const emojis = ['🌸','⭐','🎊','💫','🌟','🎈','💛','🌻','🎉'];
+  for (let i = 0; i < 40; i++) {
+    setTimeout(() => {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      p.style.cssText = `
+        left: ${Math.random()*100}%;
+        top: -20px;
+        background: transparent;
+        font-size: ${12+Math.random()*16}px;
+        animation-duration: ${2+Math.random()*3}s;
+        animation-delay: 0s;
+      `;
+      p.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+      container.appendChild(p);
+      setTimeout(() => p.remove(), 5000);
+    }, i * 100);
+  }
+}
+
+function restartGame() {
+  document.getElementById('birthday-card').classList.remove('show');
+  document.getElementById('bloom-canvas').getContext('2d').clearRect(0,0,9999,9999);
+  currentStage = 0;
+  updatePlant();
+  document.getElementById('stem').style.height = '0px';
+  document.getElementById('soil').style.setProperty('--sprout-display','none');
+  document.getElementById('flower-head').style.display = 'none';
+  document.getElementById('big-flower-head').querySelectorAll('.big-petal').forEach(p=>p.remove());
+  document.getElementById('sparkle-ring').innerHTML = '';
+  document.getElementById('progress-fill').style.width = '0%';
+  document.getElementById('stage-label').textContent = '🌱 Etapa 1/5';
+  showScreen('intro-screen');
+}
+</script>
+</body>
+</html>
